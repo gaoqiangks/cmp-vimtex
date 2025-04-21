@@ -141,8 +141,10 @@ parser.start_parsing = function(self)
     self.lnum = nil
 
     for _, v in pairs(self.entries) do
-      self.result[v.cite_key] = self.parse_entry_body(self, v)
-      self.result[v.cite_key].info = self.format_entry(self.result[v.cite_key])
+      if v.cite_key then
+        self.result[v.cite_key] = self.parse_entry_body(self, v)
+        self.result[v.cite_key].info = self.format_entry(self.result[v.cite_key])
+      end
     end
 
     self.strings = nil
@@ -191,6 +193,7 @@ parser.parse_type = function(self, line)
 end
 
 parser.parse_string = function(self, line)
+  if not line then return false end
   self.current.level = self.current.level + vim.fn['cmp_vimtex#count'](line, '{') - vim.fn['cmp_vimtex#count'](line, '}')
   if self.current.level > 0 then
     self.current.body = self.current.body .. line
@@ -208,6 +211,7 @@ parser.parse_string = function(self, line)
 end
 
 parser.parse_entry = function(self, line)
+  if not line then return false end
   self.current.level = self.current.level + vim.fn['cmp_vimtex#count'](line, '{') - vim.fn['cmp_vimtex#count'](line, '}')
   if self.current.level > 0 then
     self.current.body = self.current.body .. line
